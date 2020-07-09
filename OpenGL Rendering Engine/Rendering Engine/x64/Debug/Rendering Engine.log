@@ -1,0 +1,2 @@
+﻿  Main.cpp
+D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Source\Main.cpp(3): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "GLFW/glfw3.h": No such file or directory

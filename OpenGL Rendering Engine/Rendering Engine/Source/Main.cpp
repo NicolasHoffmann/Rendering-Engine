@@ -38,28 +38,28 @@ int main(void) {
 		// GLEW Version wird auf der Konsole ausgegeben
 			fprintf(stdout, "GLEW %s wird verwendet \n", glewGetString(GLEW_VERSION));
 
+		// Array mit Dreiecks-Eckpunkten
+			float points[6] = {
+				-0.8f, -0.0f,
+				 0.0f,  0.9f,
+				 0.0f, -0.7f
+			};
+
+		// Buffer
+			unsigned int buffer;
+			glGenBuffers(1, &buffer); // Generiert eine Anzahl von Buffern und liefert eine ID
+			glBindBuffer(GL_ARRAY_BUFFER, buffer); // Wählt den aktuellen Buffer aus und gibt ihm einen Typ (hier: Array)
+			glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float) /* alt: sizeof(points) */, points, GL_STATIC_DRAW); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
 
 		// Ein Loop der durch Schließen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {
 
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
+					// --- glColor3f(0.0, 1.0, 0.7);
 
-					glColor3f(0.0, 1.0, 0.7);
-
-					glBegin(GL_TRIANGLES);
-					glVertex2f(0.8f, -0.0f);
-					glVertex2f(0.0f, 0.9f);
-					glVertex2f(0.0f, -0.7f);
-					glEnd();
-
-					glColor3f(1.0, 0.0, 0.7);
-
-					glBegin(GL_TRIANGLES);
-					glVertex2f(-0.8f, -0.0f);
-					glVertex2f(0.0f, 0.9f);
-					glVertex2f(0.0f, -0.7f);
-					glEnd();
+					glDrawArrays(GL_TRIANGLES, 0, 3);
+					// --- glDrawElements(GL_TRIANGLES, 3, )
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht
 					glfwSwapBuffers(window);

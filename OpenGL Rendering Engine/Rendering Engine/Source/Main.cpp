@@ -7,8 +7,6 @@
 
 	#include <iostream>
 
-	#include "ShaderUtil.h"
-
 
 
 int main(void) {
@@ -26,8 +24,8 @@ int main(void) {
 				return -1;
 			}
 
-
-	glfwMakeContextCurrent(window);
+	// Rendering Kontext wird erstellt
+		glfwMakeContextCurrent(window);
 
 	GLenum err = glewInit();
 
@@ -40,23 +38,6 @@ int main(void) {
 		// GLEW Version wird auf der Konsole ausgegeben
 			fprintf(stdout, "GLEW %s wird verwendet \n", glewGetString(GLEW_VERSION));
 
-		ShaderUtil shaderUtil;
-		shaderUtil.Load("shaders/vs.shader", "shaders/fs.shader");
-
-		// Eckpunkte des Dreiecks als Float
-			float points[6] = {
-				-0.8f, -0.5f,
-				0.0f, 0.9f,
-				0.5f, -0.7f
-			};
-
-		unsigned int buffer;
-
-		glGenBuffers(1, &buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), points, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
 		// Ein Loop der durch Schlieﬂen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {
@@ -64,7 +45,19 @@ int main(void) {
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
 
-					glDrawArrays(GL_TRIANGLES, 0, 3);
+					glColor3f(0.0, 1.0, 0.7);
+
+					glBegin(GL_TRIANGLES);
+					glVertex2f(0.8f, -0.0f);
+					glVertex2f(0.0f, 0.9f);
+					glVertex2f(0.0f, -0.7f);
+					glEnd();
+
+					glBegin(GL_TRIANGLES);
+					glVertex2f(-0.8f, -0.0f);
+					glVertex2f(0.0f, 0.9f);
+					glVertex2f(0.0f, -0.7f);
+					glEnd();
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht
 					glfwSwapBuffers(window);
@@ -72,8 +65,6 @@ int main(void) {
 				// Ereignisse werden abgestimmt und verarbeitet
 					glfwPollEvents();
 			}
-
-			shaderUtil.Delete();
 
 	}
 

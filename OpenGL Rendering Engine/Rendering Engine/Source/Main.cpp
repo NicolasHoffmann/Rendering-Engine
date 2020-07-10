@@ -53,6 +53,8 @@ int main(void) {
 					glVertex2f(0.0f, -0.7f);
 					glEnd();
 
+					glColor3f(1.0, 0.0, 0.7);
+
 					glBegin(GL_TRIANGLES);
 					glVertex2f(-0.8f, -0.0f);
 					glVertex2f(0.0f, 0.9f);

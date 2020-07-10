@@ -1,3 +1,4 @@
 ﻿  Main.cpp
 D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Source\Main.cpp(48): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
+D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Source\Main.cpp(56): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
   Rendering Engine.vcxproj -> D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Debug\Rendering Engine.exe

@@ -47,9 +47,14 @@ int main(void) {
 
 		// Buffer
 			unsigned int buffer;
-			glGenBuffers(1, &buffer); // Generiert eine Anzahl von Buffern und liefert eine ID
-			glBindBuffer(GL_ARRAY_BUFFER, buffer); // Wählt den aktuellen Buffer aus und gibt ihm einen Typ (hier: Array)
-			glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float) /* alt: sizeof(points) */, points, GL_STATIC_DRAW); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
+			glGenBuffers(1, &buffer); // Generiert eine Anzahl von Buffern und liefert die Adresse als ID zurück
+
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer); // Wählt den aktuell zu benutzenden Buffer aus
+				glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float) /* alt: sizeof(points) */, points, GL_STATIC_DRAW); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
+				glEnableVertexAttribArray(0); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
+				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
+
 
 		// Ein Loop der durch Schließen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {
@@ -57,8 +62,7 @@ int main(void) {
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
 					// --- glColor3f(0.0, 1.0, 0.7);
-
-					glDrawArrays(GL_TRIANGLES, 0, 3);
+					// ---glDrawArrays(GL_TRIANGLES, 0, 3);
 					// --- glDrawElements(GL_TRIANGLES, 3, )
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht

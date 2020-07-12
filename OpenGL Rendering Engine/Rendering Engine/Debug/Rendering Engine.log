@@ -1,3 +1,2 @@
 ﻿  Main.cpp
-D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Source\Main.cpp(66): warning C4477: "fprintf": Die Formatzeichenfolge "%s" erfordert ein Argument vom Typ "char *", das variadic-Argument "1" weist aber den Typ "unsigned int" auf.
   Rendering Engine.vcxproj -> D:\Rendering Engine Repository\OpenGL Rendering Engine\Rendering Engine\Debug\Rendering Engine.exe

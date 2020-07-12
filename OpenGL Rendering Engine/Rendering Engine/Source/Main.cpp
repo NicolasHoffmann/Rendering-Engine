@@ -8,6 +8,54 @@
 	#include <iostream>
 
 
+// Methode zum Shader-Kompilieren
+	static unsigned int CompileShader(unsigned int type, const std::string& source) {
+		unsigned int id = glCreateShader(type);
+		const char* src = source.c_str(); // gibt die Speicher-Adresse des ersten String-Zeichens zurück
+		glShaderSource(id, 1, &src, nullptr); // die Quelle des Shaders wird festgelegt (um welchen Shader geht es (id) , Anzahl der Quellcodes , Pointer die auf den String deuten die den Quellcode für den Shader beinhalten , String längen werden definiert)
+		glCompileShader(id); // Shader mit bestimmter ID wird kompiliert
+
+		int status;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &status); // gibt einen Parameter aus einem Shader zurück (ID des Shaders , Parameter-Name (hier: der Status der Kompilierung) , Speicher-Adresse für den angefragten Parameter)
+
+		// wenn es es ein Problem beim Kompilieren gab
+			if (status == GL_FALSE) {
+				int length;
+				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+				char* message = (char*)alloca(length * sizeof(char)); // Variable für die Message wird mit abgefragter Länge des Info-Log erstellt
+
+				glGetShaderInfoLog(id, length, &length, message); // gibt das Info Log für einen Shader zurück (ID des Shaders , größe des Char Buffers in den das Info Log gespeichert wird , Speicher-Adresse der Länge, Zwischenspeicher (Buffer) für die Message)
+				
+				std::cout << "Kompilierungsfehler: " << std::endl;
+				std::cout << message << std::endl; // Message wird auf der Konsole ausgegeben
+
+				glDeleteShader(id); // da der Shader nicht kompiliert werden konnte, wird er gelöscht
+
+				return 0;
+			}
+
+		return id;
+	}
+
+// Quellcode der Shader wird übergeben und daraus ein Programm generiert
+	static unsigned int CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader) {
+		unsigned int program = glCreateProgram();
+		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader); // ruft die CompileShader-Methode (oben) auf
+		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader); // ruft die CompileShader-Methode (oben) auf
+
+		// Shader-Programm wird erstellt
+			glAttachShader(program, vs); // Shader wird zum Programm-Objekt hinzugefügt
+			glAttachShader(program, fs); // Shader wird zum Programm-Objekt hinzugefügt
+			glLinkProgram(program); // Das Programm wird zusammengefügt und die angehängten Shader werden zu Executables, die auf dem jeweiligen Prozessor laufen
+			glValidateProgram(program); // es wird geprüft, ob sich die Executables des Programms ausfüren lassen
+
+		// Shader können gelöscht werden, da sie nun Teil eines Programms sind
+			glDeleteShader(vs);
+			glDeleteShader(fs);
+
+		return program;
+	}
+
 
 int main(void) {
 	GLFWwindow* window;
@@ -38,14 +86,14 @@ int main(void) {
 		// GLEW Version wird auf der Konsole ausgegeben
 			fprintf(stdout, "GLEW %s wird verwendet \n", glewGetString(GLEW_VERSION));
 
-		// Array mit Dreiecks-Eckpunkten
+		// Array mit Dreiecks-Eckpunkten (X, Y)
 			float points[6] = {
 				-0.8f, -0.0f,
 				 0.0f,  0.9f,
 				 0.0f, -0.7f
 			};
 
-		// Buffer
+		// Buffer (Zwischenspeicher)
 			unsigned int buffer;
 			glGenBuffers(1, &buffer); // Generiert eine Anzahl von Buffern und liefert die Adresse als ID zurück
 
@@ -56,13 +104,37 @@ int main(void) {
 				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
 
 
+		// Shader
+			std::string vertexShader =
+				"#version 330 core\n"
+				"\n"
+				"layout(location = 0) in vec4 position;"
+				"\n"
+				"void main()\n"
+				"{\n"
+				"	gl_Position = position;\n"
+				"}\n";
+
+			std::string fragmentShader =
+				"#version 330 core\n"
+				"\n"
+				"out vec4 color;"
+				"\n"
+				"void main()\n"
+				"{\n"
+				"	color = vec4(0.0, 1.0, 0.7, 1.0);\n"
+				"}\n";
+
+			unsigned int shaderProgram = CreateShaderProgram(vertexShader, fragmentShader);
+			glUseProgram(shaderProgram);
+
 		// Ein Loop der durch Schließen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {
 
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
-					// --- glColor3f(0.0, 1.0, 0.7);
-					// ---glDrawArrays(GL_TRIANGLES, 0, 3);
+
+					glDrawArrays(GL_TRIANGLES, 0, 3);
 					// --- glDrawElements(GL_TRIANGLES, 3, )
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht
@@ -71,6 +143,7 @@ int main(void) {
 				// Ereignisse werden abgestimmt und verarbeitet
 					glfwPollEvents();
 			}
+			glDeleteProgram(shaderProgram);
 
 	}
 

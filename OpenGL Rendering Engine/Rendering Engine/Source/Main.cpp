@@ -16,6 +16,7 @@ struct ShaderProgramSource {
 	std::string fragmentShaderSource;
 };
 
+/*
 static ShaderProgramSource ParseShader(const std::string& filepath) {
 	std::ifstream stream(filepath);
 
@@ -42,6 +43,32 @@ static ShaderProgramSource ParseShader(const std::string& filepath) {
 			stringStream[(int)type] << line << '\n';
 		}
 
+	}
+
+	return { stringStream[0].str(), stringStream[1].str() };
+}
+*/
+
+static ShaderProgramSource ParseShader(const std::string& vertexFilepath, const std::string& fragmentFilepath) {
+	std::ifstream vertexStream(vertexFilepath);
+	std::ifstream fragmentStream(fragmentFilepath);
+
+	enum class ShaderType {
+		NONE = -1,
+		VERTEX = 0,
+		FRAGMENT = 1
+	};
+
+	std::stringstream stringStream[2];
+	std::string line;
+	ShaderType type = ShaderType::NONE;
+
+	while (getline(vertexStream, line)) {
+		stringStream[(int)ShaderType::VERTEX] << line << '\n';
+	}
+
+	while (getline(fragmentStream, line)) {
+		stringStream[(int)ShaderType::FRAGMENT] << line << '\n';
 	}
 
 	return { stringStream[0].str(), stringStream[1].str() };
@@ -131,30 +158,42 @@ int main(void) {
 		// GLEW Version wird auf der Konsole ausgegeben
 			fprintf(stdout, "GLEW %s wird verwendet \n", glewGetString(GLEW_VERSION));
 
-		// Array mit Dreiecks-Eckpunkten (X, Y)
-			float points[12] = {
+		// Array mit Quadratss-Eckpunkten (X, Y)
+			float points[8] = {
 				-0.5f, -0.5f,
 				 0.5f, -0.5f,
 				 0.5f,	0.5f,
-
-				 0.5f,	0.5f,
 				-0.5f,	0.5f,
-				-0.5f, -0.5f
+			};
+
+		// Array das auf die benötigten Eckpunkte verweist (um es als 2 Dreiecke darzustellen)
+			unsigned int index[] = {
+				0, 1, 2,
+				2, 3, 0
 			};
 
 		// Buffer (Zwischenspeicher)
-			unsigned int buffer;
-			glGenBuffers(1, &buffer); // Generiert eine Anzahl von Buffern und liefert die Adresse als ID zurück
+			// Vertex-Buffer
+				unsigned int vertexBuffer;
+				glGenBuffers(1, &vertexBuffer); // Generiert eine Anzahl von Buffern und liefert die Adresse als ID zurück
 
+				glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Wählt den aktuell zu benutzenden Buffer aus
+					glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), points, GL_STATIC_DRAW); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
+					glEnableVertexAttribArray(0); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
+					glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
 
-			glBindBuffer(GL_ARRAY_BUFFER, buffer); // Wählt den aktuell zu benutzenden Buffer aus
-				glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float) /* alt: sizeof(points) */, points, GL_STATIC_DRAW); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
-				glEnableVertexAttribArray(0); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
-				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
+			// Index-Buffer
+				unsigned int indexBuffer;
+				glGenBuffers(1, &indexBuffer);
 
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * sizeof(unsigned int), index, GL_STATIC_DRAW);
 
 		// Shader Programm erstellen
-			ShaderProgramSource source = ParseShader("resources/shaders/RedColor.shader");
+			ShaderProgramSource source = ParseShader(
+				"resources/shaders/RedColor/vertex.shader", 
+				"resources/shaders/RedColor/fragment.shader"
+			);
 
 			unsigned int shaderProgram = CreateShaderProgram(source.vertexShaderSource, source.fragmentShaderSource);
 			glUseProgram(shaderProgram);
@@ -165,7 +204,7 @@ int main(void) {
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
 
-					glDrawArrays(GL_TRIANGLES, 0, 6); // (Startpunkt im Array , Anzahl der Vertexe)
+					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // (Startpunkt im Array , Anzahl der Vertexe)
 					// --- glDrawElements(GL_TRIANGLES, 3, )
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht

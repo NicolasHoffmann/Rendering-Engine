@@ -140,7 +140,7 @@ int main(void) {
 
 	// Rendering Kontext wird erstellt
 		glfwMakeContextCurrent(window);
-
+		glfwSwapInterval(1);
 
 
 
@@ -199,11 +199,33 @@ int main(void) {
 			glUseProgram(shaderProgram);
 
 		// Farbe festlegen
+			float r = 0.0f;
+			bool forward = true;
+
 			int location = glGetUniformLocation(shaderProgram, "u_Color");
-			glUniform4f(location, 0.0f, 1.0f, 0.7f, 1.0f);
+			// glUniform4f(location, r, 1.0f, 0.7f, 1.0f);
 
 		// Ein Loop der durch Schließen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {
+
+				if (forward == true) {
+					r += 0.05f;
+
+					if (r >= 0.99f) {
+						forward = false;
+					}	
+				}
+				else if (forward == false) {
+					r -= 0.05f;
+
+					if (r <= 0.01f) {
+						forward = true;
+					}
+				}
+
+				glUniform4f(location, r, 1.0f, 0.7f, 1.0f);
+
+				std::cout << r << std::endl;
 
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);

@@ -191,12 +191,16 @@ int main(void) {
 
 		// Shader Programm erstellen
 			ShaderProgramSource source = ParseShader(
-				"resources/shaders/RedColor/vertex.shader", 
-				"resources/shaders/RedColor/fragment.shader"
+				"resources/shaders/Color/vertex.shader", 
+				"resources/shaders/Color/fragment.shader"
 			);
 
 			unsigned int shaderProgram = CreateShaderProgram(source.vertexShaderSource, source.fragmentShaderSource);
 			glUseProgram(shaderProgram);
+
+		// Farbe festlegen
+			int location = glGetUniformLocation(shaderProgram, "u_Color");
+			glUniform4f(location, 0.0f, 1.0f, 0.7f, 1.0f);
 
 		// Ein Loop der durch Schlieﬂen des fensters beendet wird
 			while (!glfwWindowShouldClose(window)) {

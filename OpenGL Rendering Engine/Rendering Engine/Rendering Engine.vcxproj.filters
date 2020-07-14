@@ -21,7 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resouces\shaders\RedColor.shader" />
-    <None Include="resources\shaders\RedColor\vertex.shader" />
-    <None Include="resources\shaders\RedColor\fragment.shader" />
+    <None Include="resources\shaders\Color\fragment.shader" />
+    <None Include="resources\shaders\Color\vertex.shader" />
   </ItemGroup>
 </Project>

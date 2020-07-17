@@ -123,12 +123,24 @@ static ShaderProgramSource ParseShader(const std::string& vertexFilepath, const 
 	}
 
 
+
+
+
+// --------------------- M A I N ------------------------
+
+
 int main(void) {
 	GLFWwindow* window;
 
-	// Bibliothek wird initialisiert
-		if (!glfwInit())
+	// Bibliothek wird initialisiert: Hat es geklappt?
+		if (!glfwInit()) {
 			return -1;
+		}
+
+	// OpenGL Version wird auf 3.3 gesetzt
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Fenster mit OpenGL-Kontext wird generiert
 		// Breite, Höhe, Name
@@ -171,6 +183,11 @@ int main(void) {
 				0, 1, 2,
 				2, 3, 0
 			};
+
+		// Vertex Array Objekt
+			unsigned int vertexArrayObject;
+			glGenVertexArrays(1, &vertexArrayObject);
+			glBindVertexArray(vertexArrayObject);
 
 		// Buffer (Zwischenspeicher)
 			// Vertex-Buffer
@@ -223,15 +240,21 @@ int main(void) {
 					}
 				}
 
-				glUniform4f(location, r, 1.0f, 0.7f, 1.0f);
 
 				std::cout << r << std::endl;
 
 				// Hier wird gerendert
 					glClear(GL_COLOR_BUFFER_BIT);
 
-					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // (Startpunkt im Array , Anzahl der Vertexe)
-					// --- glDrawElements(GL_TRIANGLES, 3, )
+					glUseProgram(shaderProgram);
+
+					// neue Farbe wird übergeben
+						glUniform4f(location, r, 1.0f, 0.7f, 1.0f);
+
+						glBindVertexArray(vertexArrayObject);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht
 					glfwSwapBuffers(window);

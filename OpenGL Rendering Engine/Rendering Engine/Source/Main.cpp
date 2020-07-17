@@ -11,27 +11,10 @@
 	#include <string>
 	#include <sstream>
 
-	#define ASSERT(x) if (!(x)) __debugbreak();
-	#define GLTest(x) glClearError();\
-		x;\
-		ASSERT(glLogCall(#x, __FILE__, __LINE__))
+	#include "Renderer.h"
+	#include "VertexBuffer.h"
+	#include "IndexBuffer.h"
 
-
-static void glClearError() {
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool glLogCall(const char* function, const char* file, int line) {
-	while (GLenum error = glGetError()) {
-		std::cout << std::endl 
-			<< "[OpenGL Fehler] (" << error << ") " << std::endl 
-			<< "Funktion: "<< function << std::endl 
-			<< "Datei: " << file << std::endl 
-			<< "Zeile: " << line << std::endl;
-		return false;
-	}
-	return true;
-}
 
 struct ShaderProgramSource {
 	std::string vertexShaderSource;
@@ -213,20 +196,13 @@ int main(void) {
 
 		// Buffer (Zwischenspeicher)
 			// Vertex-Buffer
-				unsigned int vertexBuffer;
-				GLTest(glGenBuffers(1, &vertexBuffer)); // Generiert eine Anzahl von Buffern und liefert die Adresse als ID zurück
+				VertexBuffer vertexBuffer(points, 4 * 2 * sizeof(float));
 
-				GLTest(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer)); // Wählt den aktuell zu benutzenden Buffer aus
-					GLTest(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), points, GL_STATIC_DRAW)); // gibt dem (Array-)Buffer eine festgelegte Anzahl an Bytes und füllt ihn mit Daten (NULL = nicht füllen)
-					GLTest(glEnableVertexAttribArray(0)); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
-					GLTest(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0)); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
+				GLTest(glEnableVertexAttribArray(0)); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
+				GLTest(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0)); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
 
 			// Index-Buffer
-				unsigned int indexBuffer;
-				GLTest(glGenBuffers(1, &indexBuffer));
-
-				GLTest(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
-				GLTest(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * sizeof(unsigned int), index, GL_STATIC_DRAW));
+				IndexBuffer indexBuffer(index, 6);
 
 		// Shader Programm erstellen
 			ShaderProgramSource source = ParseShader(
@@ -275,8 +251,8 @@ int main(void) {
 					// neue Farbe wird übergeben
 						GLTest(glUniform4f(location, r, 1.0f, 0.7f, 1.0f));
 
-						GLTest(glBindVertexArray(vertexArrayObject));
-						GLTest(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
+					GLTest(glBindVertexArray(vertexArrayObject));
+					indexBuffer.Bind();
 
 					// Elemente werden gezeichnet
 						GLTest(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));

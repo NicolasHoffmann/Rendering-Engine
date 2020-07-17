@@ -131,8 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\IndexBuffer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
+    <ClCompile Include="Source\vertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resouces\shaders\RedColor.shader" />
@@ -140,7 +142,9 @@
     <None Include="resources\shaders\Color\vertex.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\IndexBuffer.h" />
     <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\vertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,10 +18,18 @@
     <ClCompile Include="Source\Main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Renderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resouces\shaders\RedColor.shader" />
     <None Include="resources\shaders\Color\fragment.shader" />
     <None Include="resources\shaders\Color\vertex.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Renderer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

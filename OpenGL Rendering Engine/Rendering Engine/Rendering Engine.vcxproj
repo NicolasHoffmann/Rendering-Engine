@@ -132,11 +132,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resouces\shaders\RedColor.shader" />
     <None Include="resources\shaders\Color\fragment.shader" />
     <None Include="resources\shaders\Color\vertex.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

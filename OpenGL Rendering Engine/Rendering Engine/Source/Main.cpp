@@ -183,10 +183,24 @@ int main(void) {
 				-0.5f,	0.5f,
 			};
 
+			float hexagonPoints[14] = {
+				 0.0f,  0.0f,
+				 0.8f, -0.5f,
+				 0.8f,  0.5f,
+				 0.0f,  1.0f,
+				-0.8f,  0.5f,
+				-0.8f, -0.5f,
+				 0.0f, -1.0f
+			};
+
 		// Array das auf die benötigten Eckpunkte verweist (um es als 2 Dreiecke darzustellen)
 			unsigned int index[] = {
 				0, 1, 2,
-				2, 3, 0
+				0, 2, 3,
+				0, 3, 4,
+				0, 4, 5,
+				0, 5, 6,
+				0, 6, 1
 			};
 
 		// Vertex Array Objekt
@@ -196,13 +210,13 @@ int main(void) {
 
 		// Buffer (Zwischenspeicher)
 			// Vertex-Buffer
-				VertexBuffer vertexBuffer(points, 4 * 2 * sizeof(float));
+				VertexBuffer vertexBuffer(hexagonPoints, 2 * 7 * sizeof(float));
 
 				GLTest(glEnableVertexAttribArray(0)); // Ein Vertex-Attribut mit einem bestimmten Index (hier: 0) wird aktiviert
 				GLTest(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0)); // (Index des Attributs (hier: Koordinaten)(Index: 0) ,  wie viele Attribute des Datentyps (hier: float) hat der Vertex (hier: 2) , Datentyp , ist der Inhalt normalisiert , wie viele Byte lang ist ein Vertex (hier: 2 * float-Länge) , am wievielten Byte im Vertex fängt das Attribut an (hier: 0));
 
 			// Index-Buffer
-				IndexBuffer indexBuffer(index, 6);
+				IndexBuffer indexBuffer(index, 3 * 6);
 
 		// Shader Programm erstellen
 			ShaderProgramSource source = ParseShader(
@@ -255,7 +269,7 @@ int main(void) {
 					indexBuffer.Bind();
 
 					// Elemente werden gezeichnet
-						GLTest(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+						GLTest(glDrawElements(GL_TRIANGLES, 3 * 6, GL_UNSIGNED_INT, nullptr));
 
 				// Buffer Swap: Front- und Back-Imagebuffer werden ausgetauscht
 					glfwSwapBuffers(window);
